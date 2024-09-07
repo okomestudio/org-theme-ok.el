@@ -1,21 +1,21 @@
-;;; org-ok-theme.el --- Okome Studio Theme for Org Mode  -*- lexical-binding: t -*-
+;;; org-theme-ok.el --- Org Theme for Okome Studio  -*- lexical-binding: t -*-
 ;;; Commentary:
 ;;; Code:
 
 (require 'ok)
 
-(defvar org-ok-theme-font-family-outline "URW Classico"
+(defvar org-theme-ok-font-family-outline "URW Classico"
   "Font for outlines.")
 
-(defvar org-ok-theme-font-family-outline-ja "Noto Sans CJK JP"
+(defvar org-theme-ok-font-family-outline-ja "Noto Sans CJK JP"
   "Font for outlines in Japanese.")
 
-(defface org-ok-theme-face-outline '((t :inherit 'default))
+(defface org-theme-ok-face-outline '((t :inherit 'default))
   "Face for outlines.
 Use when contrast with non-outline contenst is desired."
-  :group 'org-ok-theme)
+  :group 'org-theme-ok)
 
-(defvar org-ok-theme-fixed-pitch-faces
+(defvar org-theme-ok-fixed-pitch-faces
   '(font-lock-builtin-face
     font-lock-comment-delimiter-face
     font-lock-comment-face
@@ -44,13 +44,14 @@ Use when contrast with non-outline contenst is desired."
     org-meta-line
     org-modern-bracket-line
     org-modern-tag
+    org-modern-todo
     org-property-value
     org-special-keyword
     ;; org-table
     org-verbatim)
   "Fixed-pitch faces in Org mode.")
 
-(defvar org-ok-theme-outline-faces
+(defvar org-theme-ok-outline-faces
   '((org-level-1 . '(:height 1.24))
     (org-level-2 . '(:height 1.12))
     (org-level-3 . '(:height 1.00))
@@ -63,6 +64,20 @@ Use when contrast with non-outline contenst is desired."
   "Base outlines faces used in Org mode.")
 
 (push '("URW Classico" . 1.28) face-font-rescale-alist)
+
+(with-eval-after-load 'org-modern
+  (let* ((face 'org-modern-todo)
+         (height (face-attribute face :height nil t))
+         (background (face-attribute face :background nil t))
+         (foreground (face-attribute face :foreground nil t))
+         (weight (face-attribute face :weight nil t))
+         (inherit 'org-theme-ok-face-outline))
+    (set-face-attribute face nil
+                        :height height
+                        :foreground "white"
+                        :background "red"
+                        :weight weight
+                        :inherit inherit)))
 
 (with-eval-after-load 'org-faces
   ;;   :ensure-system-package
@@ -77,20 +92,20 @@ Use when contrast with non-outline contenst is desired."
         frame)
     ;; Create fontset.
     (ok-face-fontset-create fontset
-                            org-ok-theme-font-family-outline
-                            :subsets `((ja ,org-ok-theme-font-family-outline-ja))
+                            org-theme-ok-font-family-outline
+                            :subsets `((ja ,org-theme-ok-font-family-outline-ja))
                             :frame frame)
-    (set-face-attribute 'org-ok-theme-face-outline frame :font fontset :fontset fontset)
+    (set-face-attribute 'org-theme-ok-face-outline frame :font fontset :fontset fontset)
 
     ;; Set faces.
-    (dolist (it org-ok-theme-outline-faces)
+    (dolist (it org-theme-ok-outline-faces)
       (let* ((face (car it))
              (prop (cdr it))
              (height (or (car (cdr (assoc :height prop)))
                          (face-attribute face :height nil t)))
              (foreground (face-attribute face :foreground nil t))
              (weight (face-attribute face :weight nil t))
-             (inherit 'org-ok-theme-face-outline))
+             (inherit 'org-theme-ok-face-outline))
         (set-face-attribute face frame
                             :height height
                             :foreground foreground
@@ -105,24 +120,28 @@ Use when contrast with non-outline contenst is desired."
     (with-eval-after-load 'org-ref
       (set-face-attribute 'org-ref-cite-face nil :weight 'normal)))
 
-  (defun org-ok-theme--remap-to-mixed-pitch ()
+  (defun org-theme-ok--remap-to-mixed-pitch ()
     (face-remap-add-relative 'default :inherit 'variable-pitch)
-    (dolist (face org-ok-theme-fixed-pitch-faces)
+    (dolist (face org-theme-ok-fixed-pitch-faces)
       (face-remap-add-relative face :inherit 'fixed-pitch)))
 
-  (defun org-ok-theme--handle-text-scale-mode ()
+  (defun org-theme-ok--handle-text-scale-mode ()
     (let ((height (ok-face-text-scale-mode-height)))
       (when height
-        (dolist (face (append org-ok-theme-fixed-pitch-faces
-                              org-ok-theme-outline-faces))
+        (dolist (face (append org-theme-ok-fixed-pitch-faces
+                              org-theme-ok-outline-faces))
           (if (consp face)
               (setq face (car face)))
           (face-remap-add-relative face :height height)))))
 
-  (add-hook 'org-mode-hook #'org-ok-theme--remap-to-mixed-pitch 91)
-  (add-hook 'org-mode-hook #'org-ok-theme--handle-text-scale-mode 92)
+  (add-hook 'org-mode-hook #'org-theme-ok--remap-to-mixed-pitch 91)
+  (add-hook 'org-mode-hook #'org-theme-ok--handle-text-scale-mode 92)
   ;; (add-hook 'org-mode-hook #'foce-window-update 93)
   )
 
-(provide 'org-ok-theme)
-;;; org-ok-theme.el ends here
+(provide 'org-theme-ok)
+
+;; Local Variables:
+;; read-symbol-shorthands: (("oto" . "org-theme-ok"))
+;; End:
+;;; org-theme-ok.el ends here
