@@ -70,6 +70,8 @@ Use when contrast with non-outline contenst is desired."
     org-verbatim)
   "Fixed-pitch faces in Org.")
 
+;;; FONT SCALING
+
 (defvar oto-outline-faces
   '((org-level-1 . '(:height 1.24))
     (org-level-2 . '(:height 1.12))
@@ -84,52 +86,35 @@ Use when contrast with non-outline contenst is desired."
 
 (push '("URW Classico" . 1.28) face-font-rescale-alist)
 
-(with-eval-after-load 'org-modern
-  (let* ((face 'org-modern-todo)
-         (height (face-attribute face :height nil t))
-         (background (face-attribute face :background nil t))
-         (foreground (face-attribute face :foreground nil t))
-         (weight (face-attribute face :weight nil t))
-         (inherit 'oto-face-outline))
-    (set-face-attribute face nil
-                        :height height
-                        :foreground "white"
-                        :background "red"
-                        :weight weight
-                        :inherit inherit)))
+;;; PER-MODE CONFIG
 
 (with-eval-after-load 'org-faces
-  (let ((fontset "fontset-urw classic")
-        frame)
-    ;; Create fontset.
+  (let ((fontset "fontset-urw classic") frame)
+    ;; Create fontset that embeds the Japanese subset
     (ok-fontset-create fontset
                        oto-font-family-outline
                        :subsets `((ja ,oto-font-family-outline-ja))
                        :frame frame)
     (set-face-attribute 'oto-face-outline frame :font fontset :fontset fontset)
 
-    ;; Set faces.
+    ;; Apply outline face properties
     (dolist (it oto-outline-faces)
       (let* ((face (car it))
-             (prop (cdr it))
-             (height (or (car (cdr (assoc :height prop)))
-                         (face-attribute face :height nil t)))
-             (foreground (face-attribute face :foreground nil t))
-             (weight (face-attribute face :weight nil t))
-             (inherit 'oto-face-outline))
-        (set-face-attribute face frame
-                            :height height
-                            :foreground foreground
-                            :weight weight
-                            :inherit inherit)))
+             (prop (cdr it)))
+        (set-face-attribute
+         face frame
+         :height (or (cadr (assoc :height prop))
+                     (face-attribute face :height nil t))
+         :foreground (face-attribute face :foreground nil t)
+         :weight (face-attribute face :weight nil t)
+         :inherit 'oto-face-outline)))
 
+    ;; Make drawer a little less prominent
     (set-face-attribute 'org-drawer frame
                         :foreground (face-attribute 'shadow :foreground))
 
-    (set-face-attribute 'org-link frame :weight 'normal)
-
-    (with-eval-after-load 'org-ref
-      (set-face-attribute 'org-ref-cite-face nil :weight 'normal)))
+    ;; Do not use bold face for links
+    (set-face-attribute 'org-link frame :weight 'normal))
 
   (defun oto--remap-to-mixed-pitch ()
     (face-remap-add-relative 'default :inherit 'variable-pitch)
@@ -149,6 +134,13 @@ Use when contrast with non-outline contenst is desired."
   (add-hook 'org-mode-hook #'oto--handle-text-scale-mode 92)
   ;; (add-hook 'org-mode-hook #'foce-window-update 93)
   )
+
+(with-eval-after-load 'org-ref
+  ;; Do not use bold face for cite refs
+  (set-face-attribute 'org-ref-cite-face nil :weight 'normal))
+
+(with-eval-after-load 'org-modern
+  (set-face-attribute 'org-modern-todo nil :weight 'bold))
 
 (provide 'org-theme-ok)
 
