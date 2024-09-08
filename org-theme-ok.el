@@ -1,12 +1,23 @@
 ;;; org-theme-ok.el --- Org Theme for Okome Studio  -*- lexical-binding: t -*-
+;;
+;; Version: 0.1
+;; Package-Requires: ((emacs "29.1") (org "9.7") (org-modern "1.5") (valign "3.1.1"))
+;;
 ;;; Commentary:
 ;;
 ;; Currently, only the light theme with minor adjustments for use with
 ;; `flexoki-themes' is implemented.
 ;;
+;; Other packages to consider:
+;;
+;;   - `org-margin': not used due to conflicts with `org-indent-mode'
+;;
 ;;; Code:
 
 (require 'ok)
+(require 'org)
+(require 'org-modern)
+(require 'valign)
 
 (defvar oto-font-family-outline "URW Classico"
   "Font for outlines.")
@@ -88,6 +99,65 @@ Use when contrast with non-outline contenst is desired."
 
 ;;; PER-MODE CONFIG
 
+(defun org-theme-ok--ad-apply-only-in-current-buffer-window (func &rest rest)
+  "Invoke FUNC only when current buffer window is visible."
+  (when (get-buffer-window (current-buffer) t)
+    (apply func rest)))
+
+(with-eval-after-load 'org-indent
+  (add-hook 'org-mode-hook (lambda () (org-indent-mode 1)))
+  (advice-add #'org-indent-refresh-maybe
+              :around #'org-theme-ok--ad-apply-only-in-current-buffer-window))
+
+(with-eval-after-load 'org-modern
+  (setopt org-modern-block-name t       ; use `org-modern-indent'
+          org-modern-checkbox '((?X . #("▢𐄂" 0 2 (composition ((2)))))
+                                (?- . #("▢–" 0 2 (composition ((2)))))
+                                (?\s . #("▢" 0 1 (composition ((1))))))
+          org-modern-hide-stars nil
+          org-modern-keyword "‣ "
+          org-modern-list '((?+ . "▷")
+                            (?- . "𑁋")  ; "–"
+                            (?* . "▶"))
+          org-modern-priority t
+          org-modern-replace-stars "◉🞛○▷"
+          org-modern-star 'replace
+          org-modern-statistics t
+          org-modern-table nil
+          org-modern-tag t
+          org-modern-timestamp t
+          org-modern-todo t)
+  (add-hook 'org-mode-hook #'org-modern-mode)
+  (add-hook 'org-agenda-finalize-hook #'org-modern-agenda))
+
+;;; `org-modern-indent'
+(defun org-modern-indent-ok--fix-top-level-indent ()
+  "Activate org-modern-indent on the top-level file node.
+See github.com/jdtsmith/org-modern-indent/issues/10."
+  (if org-indent--text-line-prefixes
+      (aset org-indent--text-line-prefixes
+            0 (propertize " " 'face 'org-indent))))
+
+(add-hook 'org-indent-mode-hook #'org-modern-indent-ok--fix-top-level-indent)
+(add-hook 'org-mode-hook #'org-modern-indent-mode 90)
+(advice-add #'org-modern-indent--refresh-watch
+            :around #'org-theme-ok--ad-apply-only-in-current-buffer-window)
+
+;;; `valign'
+(setopt valign-fancy-bar t
+        valign-max-table-size 4000
+        valign-signal-parse-error t)
+
+(defvar valign-ok--max-buffer-size 100000
+  "Default max-buffer-size above which `valign-mode' will not activate.")
+
+(defun valign-ok--maybe-activate ()
+  (when (<= (buffer-size) valign-ok--max-buffer-size)
+    (valign-mode 1)))
+
+(add-hook 'org-mode-hook #'valign-ok--maybe-activate)
+
+;;; Fonts and faces
 (with-eval-after-load 'org-faces
   (let ((fontset "fontset-urw classic") frame)
     ;; Create fontset that embeds the Japanese subset
@@ -139,8 +209,7 @@ Use when contrast with non-outline contenst is desired."
   ;; Do not use bold face for cite refs
   (set-face-attribute 'org-ref-cite-face nil :weight 'normal))
 
-(with-eval-after-load 'org-modern
-  (set-face-attribute 'org-modern-todo nil :weight 'bold))
+(set-face-attribute 'org-modern-todo nil :weight 'bold)
 
 (provide 'org-theme-ok)
 
