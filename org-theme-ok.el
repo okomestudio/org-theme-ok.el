@@ -138,10 +138,6 @@ Use when contrast with non-outline contenst is desired."
             (setq face (car face)))
         (face-remap-add-relative face :height height)))))
 
-(add-hook 'org-mode-hook #'oto--remap-to-mixed-pitch 91)
-(add-hook 'org-mode-hook #'oto--handle-text-scale-mode 92)
-;; (add-hook 'org-mode-hook #'foce-window-update 93)
-
 ;; Do not use bold face for cite refs
 ;; (set-face-attribute 'org-ref-cite-face nil :weight 'normal)
 
@@ -155,7 +151,6 @@ Use when contrast with non-outline contenst is desired."
     (apply func rest)))
 
 ;;; `org-indent'
-(add-hook 'org-mode-hook (lambda () (org-indent-mode 1)))
 (advice-add #'org-indent-refresh-maybe
             :around #'oto--ad-apply-only-in-current-buffer-window)
 
@@ -177,7 +172,6 @@ Use when contrast with non-outline contenst is desired."
         org-modern-tag t
         org-modern-timestamp t
         org-modern-todo t)
-(add-hook 'org-mode-hook #'org-modern-mode)
 (add-hook 'org-agenda-finalize-hook #'org-modern-agenda)
 
 ;;; `org-modern-indent'
@@ -189,7 +183,6 @@ See github.com/jdtsmith/org-modern-indent/issues/10."
             0 (propertize " " 'face 'org-indent))))
 
 (add-hook 'org-indent-mode-hook #'org-modern-indent-ok--fix-top-level-indent)
-(add-hook 'org-mode-hook #'org-modern-indent-mode 90)
 (advice-add #'org-modern-indent--refresh-watch
             :around #'oto--ad-apply-only-in-current-buffer-window)
 
@@ -205,7 +198,17 @@ See github.com/jdtsmith/org-modern-indent/issues/10."
   (when (<= (buffer-size) valign-ok--max-buffer-size)
     (valign-mode 1)))
 
-(add-hook 'org-mode-hook #'valign-ok--maybe-activate)
+(defun oto-apply ()
+  "Apply `org-theme-ok' theme in Org."
+  (org-indent-mode 1)
+  (org-modern-mode 1)
+  (org-modern-indent-mode 1)
+  (oto--remap-to-mixed-pitch)
+  (oto--handle-text-scale-mode)
+  ;; (foce-window-update)
+  (valign-ok--maybe-activate))
+
+(add-hook 'org-mode-hook #'oto-apply 90)
 
 (provide 'org-theme-ok)
 
