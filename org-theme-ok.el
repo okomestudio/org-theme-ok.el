@@ -122,7 +122,7 @@ Use when contrast with non-outline contenst is desired."
                       :foreground (face-attribute 'shadow :foreground))
 
   ;; Do not use bold face for links
-  (set-face-attribute 'org-link frame :weight 'normal))
+  (set-face-attribute 'link frame :weight 'unspecified))
 
 (defun oto--remap-to-mixed-pitch ()
   (face-remap-add-relative 'default :inherit 'variable-pitch)
