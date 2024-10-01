@@ -67,15 +67,15 @@ Use when contrast with non-outline contenst is desired."
   "Fixed-pitch faces in Org.")
 
 (defvar oto-outline-faces
-  '((org-level-1 . '(:height 1.24))
-    (org-level-2 . '(:height 1.12))
-    (org-level-3 . '(:height 1.00))
-    (org-level-4 . '(:height 0.90))
-    (org-level-5 . '(:height 0.90))
-    (org-level-6 . '(:height 0.90))
-    (org-level-7 . '(:height 0.90))
-    (org-level-8 . '(:height 0.90))
-    (org-document-title . '(:height 1.24)))
+  '((org-level-1 . '(:height 1.4))
+    (org-level-2 . '(:height 1.2))
+    (org-level-3 . '(:height 1.0))
+    (org-level-4 . '(:height 1.0))
+    (org-level-5 . '(:height 1.0))
+    (org-level-6 . '(:height 1.0))
+    (org-level-7 . '(:height 1.0))
+    (org-level-8 . '(:height 1.0))
+    (org-document-title . '(:height 1.6)))
   "Base outlines faces used in Org.")
 
 (push '("URW Classico" . 1.28) face-font-rescale-alist)
@@ -103,19 +103,21 @@ Use when contrast with non-outline contenst is desired."
                      oto-font-family-outline
                      :subsets `((ja ,oto-font-family-outline-ja))
                      :frame frame)
-  (set-face-attribute 'oto-face-outline frame :font fontset :fontset fontset)
+  (set-face-attribute 'oto-face-outline frame
+                      :family oto-font-family-outline
+                      ;; :font fontset
+                      :fontset fontset)
 
   ;; Apply outline face properties
   (dolist (it oto-outline-faces)
-    (let* ((face (car it))
-           (prop (cdr it)))
-      (set-face-attribute
-       face frame
-       :height (or (cadr (assoc :height prop))
-                   (face-attribute face :height nil t))
-       :foreground (face-attribute face :foreground nil t)
-       :weight (face-attribute face :weight nil t)
-       :inherit 'oto-face-outline)))
+    (let ((face (car it))
+          (prop (cdr it)))
+      (set-face-attribute face frame
+                          :height (or (cadr (assoc :height prop))
+                                      (face-attribute face :height nil t))
+                          :foreground (face-attribute face :foreground nil t)
+                          :weight (face-attribute face :weight nil t)
+                          :inherit 'oto-face-outline)))
 
   ;; Make drawer a little less prominent
   (set-face-attribute 'org-drawer frame
@@ -123,6 +125,13 @@ Use when contrast with non-outline contenst is desired."
 
   ;; Do not use bold face for links
   (set-face-attribute 'link frame :weight 'unspecified))
+
+;; Do not use bold face for cite refs
+;; (set-face-attribute 'org-ref-cite-face nil :weight 'normal)
+
+(set-face-attribute 'org-modern-todo nil :weight 'bold)
+
+;;; PER-MODE CONFIG
 
 (defun oto--remap-to-mixed-pitch ()
   (face-remap-add-relative 'default :inherit 'variable-pitch)
@@ -137,13 +146,6 @@ Use when contrast with non-outline contenst is desired."
         (if (consp face)
             (setq face (car face)))
         (face-remap-add-relative face :height height)))))
-
-;; Do not use bold face for cite refs
-;; (set-face-attribute 'org-ref-cite-face nil :weight 'normal)
-
-(set-face-attribute 'org-modern-todo nil :weight 'bold)
-
-;;; PER-MODE CONFIG
 
 (defun oto--ad-apply-only-in-current-buffer-window (func &rest rest)
   "Invoke FUNC only when current buffer window is visible."
@@ -204,7 +206,7 @@ See github.com/jdtsmith/org-modern-indent/issues/10."
   (org-modern-mode 1)
   (org-modern-indent-mode 1)
   (oto--remap-to-mixed-pitch)
-  (oto--handle-text-scale-mode)
+  ;; (oto--handle-text-scale-mode)
   ;; (foce-window-update)
   (valign-ok--maybe-activate))
 
