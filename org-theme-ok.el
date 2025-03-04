@@ -156,6 +156,10 @@ here."
   (set-face-attribute 'org-hide nil
                       :foreground (face-attribute 'default :background)
                       :background (face-attribute 'default :background))
+  (set-face-attribute 'org-block-begin-line nil
+                      :background (face-attribute 'default :background))
+  (set-face-attribute 'org-block-end-line nil
+                      :background (face-attribute 'default :background))
 
   ;; Make drawer a little less prominent.
   (set-face-attribute 'org-drawer nil
