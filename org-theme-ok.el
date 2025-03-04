@@ -136,18 +136,6 @@ Use when contrast with non-outline contenst is desired."
                       ;; :font fontset
                       :fontset fontset))
 
-;; Apply outline face properties. This enables different faces (e.g.,
-;; serif vs. sans serif) for the body text and the outline text.
-(dolist (it oto-outline-faces)
-  (let ((face (car it))
-        (prop (cdr it)))
-    (set-face-attribute face nil
-                        :height (or (cadr (assoc :height prop))
-                                    (face-attribute face :height nil t))
-                        :foreground (face-attribute face :foreground nil t)
-                        :weight (face-attribute face :weight nil t)
-                        :inherit 'oto-face-outline)))
-
 (defun oto--adjust-faces (theme)
   "Adjust font and faces for the new THEME.
 The properties of the faces defined by less popular packages aren't
@@ -160,6 +148,18 @@ here."
                       :background (face-attribute 'default :background))
   (set-face-attribute 'org-block-end-line nil
                       :background (face-attribute 'default :background))
+
+  ;; Apply outline face properties. This enables different faces (e.g.,
+  ;; serif vs. sans serif) for the body text and the outline text.
+  (dolist (it oto-outline-faces)
+    (let ((face (car it))
+          (prop (cdr it)))
+      (set-face-attribute face nil
+                          :height (or (cadr (assoc :height prop))
+                                      (face-attribute face :height nil t))
+                          :foreground (face-attribute face :foreground nil t)
+                          :weight (face-attribute face :weight nil t)
+                          :inherit 'oto-face-outline)))
 
   ;; Make drawer a little less prominent.
   (set-face-attribute 'org-drawer nil
@@ -177,6 +177,10 @@ here."
   ;; Ensure tags are visible.
   (set-face-attribute 'org-modern-tag nil
                       :foreground (face-attribute 'default :foreground)))
+
+;; Initialize once, as `load-theme' may not be invoked at all.
+(with-eval-after-load 'org-theme-ok
+  (oto--adjust-faces nil))
 
 (add-hook 'enable-theme-functions #'oto--adjust-faces)
 
