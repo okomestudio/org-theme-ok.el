@@ -134,7 +134,10 @@ Use when contrast with non-outline contenst is desired."
   (set-face-attribute 'oto-face-outline frame
                       :family oto-font-family-outline
                       ;; :font fontset
-                      :fontset fontset))
+                      :fontset fontset)
+
+  ;; If any font spec should be used per character basis, do it like this.
+  (set-fontset-font fontset ?― ok-faces-font-family-variable-pitch frame))
 
 (defun oto--adjust-faces (theme)
   "Adjust font and faces for the new THEME.
