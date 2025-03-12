@@ -83,7 +83,9 @@ Use when contrast with non-outline contenst is desired."
     org-property-value
     org-special-keyword
     ;; org-table
-    org-verbatim)
+    org-verbatim
+
+    corfu-default)
   "Fixed-pitch faces in Org.")
 
 (defvar oto-outline-faces
