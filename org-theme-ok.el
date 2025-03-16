@@ -264,7 +264,14 @@ See github.com/jdtsmith/org-modern-indent/issues/10."
   (when (<= (buffer-size) valign-ok--max-buffer-size)
     (valign-mode 1)))
 
-;;; MODE HOOK
+;;; `visual-line-mode'
+
+(defun visual-line-mode-ok--init ()
+  "Initialize `visual-line-mode'."
+  (setq-local fill-column 80)
+  (turn-on-visual-line-mode))
+
+;;; Minor mode
 
 (defun oto--activate ()
   "Activate `org-theme-ok-mode'.
@@ -276,10 +283,12 @@ When creating a minor mode, this would be the mode activator function."
   ;; (oto--handle-text-scale-mode)
   ;; (valign-ok--maybe-activate)
   (oto--fonts-rescale-add)
-  (add-hook 'org-agenda-finalize-hook #'org-modern-agenda))
+  (add-hook 'org-agenda-finalize-hook #'org-modern-agenda)
+  (add-hook 'org-mode-hook #'visual-line-mode-ok--init))
 
 (defun oto--deactivate ()
   "Deactivate `org-theme-ok-mode'."
+  (remove-hook 'org-mode-hook #'visual-line-mode-ok--init)
   (remove-hook 'org-agenda-finalize-hook #'org-modern-agenda)
   (oto--fonts-rescale-remove)
   ;; (valign-mode -1)
