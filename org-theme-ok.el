@@ -82,7 +82,9 @@ Use when contrast with non-outline contenst is desired."
     org-modern-todo
     org-property-value
     org-special-keyword
-    ;; org-table
+    org-table
+    org-table-header
+    org-table-row
     org-verbatim
 
     corfu-default)
@@ -272,7 +274,7 @@ When creating a minor mode, this would be the mode activator function."
   (org-modern-indent-mode 1)
   (oto--remap-to-mixed-pitch)
   ;; (oto--handle-text-scale-mode)
-  (valign-ok--maybe-activate)
+  ;; (valign-ok--maybe-activate)
   (oto--fonts-rescale-add)
   (add-hook 'org-agenda-finalize-hook #'org-modern-agenda))
 
@@ -280,7 +282,7 @@ When creating a minor mode, this would be the mode activator function."
   "Deactivate `org-theme-ok-mode'."
   (remove-hook 'org-agenda-finalize-hook #'org-modern-agenda)
   (oto--fonts-rescale-remove)
-  (valign-mode -1)
+  ;; (valign-mode -1)
   (org-modern-indent-mode -1)
   (org-modern-mode -1)
   (org-indent-mode -1))
