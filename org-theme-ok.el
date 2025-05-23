@@ -4,8 +4,8 @@
 ;;
 ;; Author: Taro Sato <okomestudio@gmail.com>
 ;; URL: https://github.com/okomestudio/org-theme-ok.el
-;; Version: 0.2.2
-;; Package-Requires: ((emacs "29.1") (ok "0.2.1") (org "9.7") (org-modern "1.5") (org-modern-indent "0.1.4") (valign "3.1.1"))
+;; Version: 0.2.3
+;; Package-Requires: ((emacs "29.1") (ok "0.2.1") (org "9.7") (org-hide-drawers "20250428.1637") (org-modern "1.5") (org-modern-indent "0.1.4") (valign "3.1.1"))
 ;;
 ;;; License:
 ;;
@@ -35,6 +35,7 @@
 
 (require 'ok)
 (require 'org)
+(require 'org-hide-drawers)
 (require 'org-modern)
 (require 'org-modern-indent)
 (require 'valign)
@@ -285,6 +286,10 @@ When creating a minor mode, this would be the mode activator function."
   (org-indent-mode 1)
   (org-modern-mode 1)
   (org-modern-indent-mode 1)
+
+  (setopt org-hide-drawers-display-string (nerd-icons-mdicon "nf-md-file_cog_outline"))
+  (add-hook 'org-mode-hook #'org-hide-drawers-mode)
+
   (oto--remap-to-mixed-pitch)
   ;; (oto--handle-text-scale-mode)
   ;; (valign-ok--maybe-activate)
@@ -298,6 +303,9 @@ When creating a minor mode, this would be the mode activator function."
   (remove-hook 'org-agenda-finalize-hook #'org-modern-agenda)
   (oto--fonts-rescale-remove)
   ;; (valign-mode -1)
+
+  (remove-hook 'org-mode-hook #'org-hide-drawers-mode)
+
   (org-modern-indent-mode -1)
   (org-modern-mode -1)
   (org-indent-mode -1))
