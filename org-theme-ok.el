@@ -4,7 +4,7 @@
 ;;
 ;; Author: Taro Sato <okomestudio@gmail.com>
 ;; URL: https://github.com/okomestudio/org-theme-ok.el
-;; Version: 0.2.1
+;; Version: 0.2.2
 ;; Package-Requires: ((emacs "29.1") (ok "0.2.1") (org "9.7") (org-modern "1.5") (org-modern-indent "0.1.4") (valign "3.1.1"))
 ;;
 ;;; License:
@@ -38,6 +38,7 @@
 (require 'org-modern)
 (require 'org-modern-indent)
 (require 'valign)
+(require 'nerd-icons)
 
 (defvar oto-font-family-outline "URW Classico"
   "Font for outlines.")
@@ -219,17 +220,22 @@ This is an advice to reduce unnecessary rendering."
 
 ;;; `org-modern'
 
-(setopt org-modern-block-name t         ; use `org-modern-indent'
+(setopt org-modern-block-name t ; use `org-modern-indent'
         org-modern-checkbox '((?X . #("▢𐄂" 0 2 (composition ((2)))))
                               (?- . #("▢–" 0 2 (composition ((2)))))
                               (?\s . #("▢" 0 1 (composition ((1))))))
         org-modern-hide-stars nil
-        org-modern-keyword "‣ "
-        org-modern-list '((?+ . "▷")
-                          (?- . "𑁋")    ; "–"
-                          (?* . "▶"))
+        org-modern-keyword
+        `(("property" . ,(nerd-icons-mdicon "nf-md-alpha_p_box_outline"))
+          ("title" . ,(concat (nerd-icons-mdicon "nf-md-note_edit_outline")
+                              " "))
+          ("filetags" . ,(nerd-icons-mdicon "nf-md-tag_outline"))
+          (t . "‣ "))
+        org-modern-list '((?+ . "🞊")
+                          (?- . "⏺")
+                          (?* . "🞉"))
         org-modern-priority t
-        org-modern-replace-stars "◉🞛○▷"
+        org-modern-replace-stars "🞛🞕🞛🞕■" ; "◉🞛○▷"
         org-modern-star 'replace
         org-modern-statistics t
         org-modern-table nil
