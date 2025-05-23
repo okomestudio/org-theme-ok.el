@@ -174,6 +174,12 @@ here."
   (set-face-attribute 'org-drawer nil
                       :foreground (face-attribute 'shadow :foreground))
 
+  ;; Lower the profile of face used in properties
+  (dolist (face '(org-meta-line org-document-info-keyword))
+    (set-face-attribute face nil
+                        :foreground (face-attribute 'org-drawer :foreground)
+                        :background (face-attribute 'org-drawer :background)))
+
   ;; Do not use bold face for links.
   (set-face-attribute 'link nil :weight 'unspecified)
 
