@@ -293,7 +293,15 @@ When creating a minor mode, this would be the mode activator function."
   (org-modern-mode 1)
   (org-modern-indent-mode 1)
 
-  (setopt org-hide-drawers-display-string (nerd-icons-mdicon "nf-md-file_cog_outline"))
+  ;; (setopt org-hide-drawers-display-string (nerd-icons-mdicon "nf-md-file_cog_outline"))
+  (setopt
+   org-hide-drawers-display-strings
+   `((top-level-property-drawer ,(nerd-icons-mdicon "nf-md-file_cog_outline"))
+     (drawer-regexp ,(propertize "[ZY...]" 'face 'shadow) ,(rx (0+ anychar)))
+     (property-drawer-regexp
+      ,(concat " " (nerd-icons-mdicon "nf-md-file_cog_outline"))
+      ,(rx (0+ anychar)))))
+
   (add-hook 'org-mode-hook #'org-hide-drawers-mode)
 
   (oto--remap-to-mixed-pitch)
